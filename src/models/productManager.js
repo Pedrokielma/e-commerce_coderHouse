@@ -28,7 +28,7 @@ export default class ProductManager {
           : JSON.parse(products);
       return limitedProducts;
     } catch (err) {
-      console.log(err, "try again");
+      return `${err}, Try again`
     }
   };
 
@@ -39,42 +39,49 @@ export default class ProductManager {
         await fs.promises.writeFile(this.path, JSON.stringify([]));
       }
       if (productList?.some((obj) => obj.code === newProduct?.code)) {
-        console.log("Product already exist");
-        return;
+        return {
+          message: "Missing obligatory fields",
+          status: 400
+        }
       } else if (
         !newProduct?.title ||
         !newProduct?.description ||
         !newProduct?.price ||
         !newProduct?.thumbnail ||
         !newProduct?.code ||
-        !newProduct?.stock
+        !newProduct?.stock ||
+        !newProduct?.category
       ) {
-        console.log("Missing obligatory fields");
-        return;
+        return {
+          message: "Missing obligatory fields",
+          status: 400
+        }
       } else {
         // add product
         newProduct.id = generateRandomId(16);
+        newProduct.status = true
         productList?.push(newProduct);
         fs.promises.writeFile(this.path, JSON.stringify(productList));
-        return `${newProduct?.title} added successfully`;
+        
+        return {
+          message: `${newProduct?.title} added successfully`,
+          status: 200
+        }
       }
     } catch (err) {
-      console.error(err, "try again");
+      return`${err}, Try again`
     }
   };
   getProductById = async (id) => {
     try {
       const productList = await this.getProducts();
       if (!productList.some((obj) => obj.id === id)) {
-        console.log(`product with id '${id}' not found`);
+        return `product with id '${id}' not found`;
       } else {
-        console.log(
-          "your product is,",
-          productList.find((obj) => obj.id === id)
-        );
+        return `Your product is, ${productList.find((obj) => obj.id === id)}`
       }
     } catch (err) {
-      console.log(err);
+      return err;
     }
   };
   updateProduct = async (id, newProduct) => {
@@ -86,9 +93,10 @@ export default class ProductManager {
         !newProduct?.price ||
         !newProduct?.thumbnail ||
         !newProduct?.code ||
-        !newProduct?.stock
+        !newProduct?.stock ||
+        !newProduct?.category 
       ) {
-        console.log("Missing obligatory fields");
+        return "Missing obligatory fields";
       } else if (productList.some((obj) => obj.id === id)) {
         productList.forEach((obj) => {
           if (obj.id === id) {
@@ -99,27 +107,27 @@ export default class ProductManager {
             obj.stock = newProduct.stock;
           }
           fs.promises.writeFile(this.path, JSON.stringify(productList));
-          console.log(`${newProduct?.title} successfully updated`);
+          return `${newProduct?.title} successfully updated`;
         });
       } else {
-        console.log(`${newProduct?.title} doesen't exist`);
+        return `${newProduct?.title} doesen't exist`;
       }
     } catch (err) {
-      console.log(err);
+      return err;
     }
   };
   deleteProduct = async (id) => {
     try {
       let productList = await this.getProducts();
       if (!productList.some((obj) => obj.id === id)) {
-        console.log(`product with id '${id}' not found`);
+        return `product with id '${id}' not found`;
       } else {
         productList = productList.filter((obj) => obj.id !== id);
         fs.promises.writeFile(this.path, JSON.stringify(productList));
-        console.log(`product with id '${id}' deleted`);
+        return `product with id '${id}' deleted`;
       }
     } catch (err) {
-      console.log(err);
+      return err;
     }
   };
 }
