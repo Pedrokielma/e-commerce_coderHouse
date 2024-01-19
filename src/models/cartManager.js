@@ -32,26 +32,35 @@ export default class CartsManager {
     }
   };
 
-  addProduct = async (cartId, prodId) => {
+  addProduct = async (prodId) => {
     try {
         const carts = await fs.promises.readFile(this.path, "utf-8");
-        const myCart = JSON.parse(carts).find(obj => obj.cartId === cartId);
-        if(myCart.products.find(obj => obj.pordId === prodId)){
-            myCart.products[prodId].quantity + 1 
-            return fs.promises.writeFile(this.path, JSON.stringify(myCart));
+        const cartsArray = JSON.parse(carts)
+        const existingProduct = cartsArray[0].products.find(obj => obj.prodId === prodId);
+        if(existingProduct){
+            existingProduct.quantity += 1 
+           
         } else {
-            myCart.products.push({
+            cartsArray[0].products.push({
                 prodId: prodId,
                 quantity: 1
             }) 
-            return fs.promises.writeFile(this.path, JSON.stringify(myCart));
-        }
-        
-        
+        } 
+        await fs.promises.writeFile(this.path, JSON.stringify(cartsArray));
+        return cartsArray[0]       
         } catch (err) {
           return`${err}, Try again`
         }
   } 
 
+  getCartById = async (cartId) => {
+    const carts = await fs.promises.readFile(this.path, "utf-8");
+    const cartsArray = JSON.parse(carts)
+    if (!cartsArray.some((obj) => obj.cartId === cartId)) {
+        return `product with id '${cartId}' not found`;
+      } else {
+        return cartsArray.find(obj => obj.cartId === cartId)
+      }
+  }
 
 }

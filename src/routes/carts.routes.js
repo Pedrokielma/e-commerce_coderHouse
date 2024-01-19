@@ -13,12 +13,24 @@ routerCarts.post("/createCart", async (req, res) => {
   });
 
 
-routerCarts.post("/addProduct/:cartId", async (req, res) => {
-    let response = await cartsManager.addProduct(req.params.cartId);
-    console.log(response)
-    // res.status(response.status).send({
-    //   message: response.message,
-    // });
+routerCarts.post("/addProduct/:prodId", async (req, res) => {
+    let response = await cartsManager.addProduct(req.params.prodId);
+    res.status(200).send({
+      message: response,
+    });
+  });
+
+  routerCarts.get("/getCartById/:cartId", async (req, res) => {
+    let response = await cartsManager.getCartById(req.params.cartId);
+   if(response){
+       res.status(200).send({
+         message: response,
+       });
+   }else{
+    res.status(400).send({
+        message: response,
+      });
+   }
   });
 
 export default routerCarts

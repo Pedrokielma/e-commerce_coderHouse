@@ -47,17 +47,9 @@ routerProd.put("/updateProduct/:id", async (req, res) => {
 
   routerProd.delete("/deleteProduct/:id", async (req, res) => {
     let response = await productManager.deleteProduct(req.params.id);
-    console.log('epa', response)
-    if(!response){
-      res.status(400).send({
-        message: 'Product not found',
-      });
-    } else {
       res.status(200).send({
         message: response,
       });
-
-    }
   });
 
 export default routerProd
