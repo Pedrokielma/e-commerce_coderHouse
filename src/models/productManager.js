@@ -40,7 +40,7 @@ export default class ProductManager {
       }
       if (productList?.some((obj) => obj.code === newProduct?.code)) {
         return {
-          message: "Missing obligatory fields",
+          message: "Product already exist",
           status: 400
         }
       } else if (
