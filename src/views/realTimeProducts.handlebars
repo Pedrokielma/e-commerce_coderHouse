@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="add-products-form">
+    <h2 class="title"> Add new products</h2>
+     <form onsubmit="return addProduct(event)">
+      <input type="text" id="title" placeholder="Title" />
+      <input type="text" id="description" placeholder="Description" />
+      <input type="number" id="price" placeholder="Price" />
+      <input type="text" id="thumbnail" placeholder="Thumbnail" />
+      <input type="text" id="code" placeholder="Code" />
+      <input type="number" id="stock" placeholder="Stock" />
+      <input type="text" id="category" placeholder="Category" />
+      <input type="submit" value="Add Product" />
+    </form>
+  </div>
+
+  <div  class="real-time-products">
+    <h1 class="title">Products</h1>
+    <div id="all-products" class="all-products"></div>
+     <div id="real-time-products" class="all-products"></div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

@@ -32,22 +32,23 @@ export default class CartsManager {
     }
   };
 
-  addProduct = async (prodId) => {
+  addProduct = async (prodId, cartId) => {
     try {
         const carts = await fs.promises.readFile(this.path, "utf-8");
         const cartsArray = JSON.parse(carts)
-        const existingProduct = cartsArray[0].products.find(obj => obj.prodId === prodId);
+        const myCart = cartsArray.find(obj => obj.cartId === cartId);
+        const existingProduct = myCart.products.find(obj => obj.prodId === prodId);
         if(existingProduct){
             existingProduct.quantity += 1 
            
         } else {
-            cartsArray[0].products.push({
+          myCart.products.push({
                 prodId: prodId,
                 quantity: 1
             }) 
         } 
         await fs.promises.writeFile(this.path, JSON.stringify(cartsArray));
-        return cartsArray[0]       
+        return myCart       
         } catch (err) {
           return`${err}, Try again`
         }

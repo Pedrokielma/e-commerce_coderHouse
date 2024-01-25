@@ -94,7 +94,8 @@ export default class ProductManager {
         !newProduct?.thumbnail ||
         !newProduct?.code ||
         !newProduct?.stock ||
-        !newProduct?.category 
+        !newProduct?.category ||
+        !newProduct?.status
       ) {
         return "Missing obligatory fields";
       } else if (productList.some((obj) => obj.id === id)) {
@@ -105,6 +106,8 @@ export default class ProductManager {
             obj.price = newProduct.price;
             obj.thumbnail = newProduct.thumbnail;
             obj.stock = newProduct.stock;
+            obj.category = newProduct.category;
+            obj.status = newProduct.status;
           }
           fs.promises.writeFile(this.path, JSON.stringify(productList));
           return `${newProduct?.title} successfully updated`;

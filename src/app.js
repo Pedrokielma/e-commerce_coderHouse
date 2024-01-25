@@ -1,6 +1,7 @@
 import express from "express";
 import routerProd from './routes/products.routes.js'
 import routerCats from './routes/carts.routes.js'
+import routerPages from './views/routes/pages.routes.js'
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
@@ -30,6 +31,9 @@ app.use(express.urlencoded({extended: true}));
 app.use('/api/products', routerProd)
 app.use('/api/carts', routerCats)
 
+//PAGES
+app.use('', routerPages)
+
 //Public
 app.use(express.static(__dirname+'/public'))
 
@@ -38,23 +42,19 @@ app.engine('handlebars', handlebars.engine())
 app.set('view engine', 'handlebars')
 app.set('views', __dirname+'/views')
 
-let messages = []
-
-//page
-
-app.get('/', (req, res)=>{
-  res.render('home', {})
-})
+let products = []
 
 //Inicializar el Socket en el servido
 io.on('connection', (socket)=>{
+  // const products = routerProd.getProducts()
+  // console.log(products)
   console.log('User conectado')
   //socket.emit('mesagge', 'Hola Cliente, soy el back')
-  socket.emit('messages', messages)
-  socket.on('new-message', (data)=>{
+  socket.emit('products', products)
+  socket.on('new-product', (data)=>{
     console.log(data)
-    messages.push(data)
-    io.sockets.emit('messages', messages)
+    products.push(data)
+    io.sockets.emit('products', products)
   })
 })
 
