@@ -46,13 +46,10 @@ let products = []
 
 //Inicializar el Socket en el servido
 io.on('connection', (socket)=>{
-  // const products = routerProd.getProducts()
-  // console.log(products)
   console.log('User conectado')
   //socket.emit('mesagge', 'Hola Cliente, soy el back')
   socket.emit('products', products)
-  socket.on('new-product', (data)=>{
-    console.log(data)
+  socket.on('new-product', (data)=>{    
     products.push(data)
     io.sockets.emit('products', products)
   })

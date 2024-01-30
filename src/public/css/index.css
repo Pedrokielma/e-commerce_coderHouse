@@ -48,7 +48,16 @@ body {
   .product-card:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
-  
+  .header-card{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+  }
+  .trash{
+    color: red;
+    cursor: pointer;
+  }
   .product-card h2 {
     color: #333;
     font-size: 18px;
