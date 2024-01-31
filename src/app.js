@@ -2,8 +2,11 @@ import express from "express";
 import routerProd from './routes/products.routes.js'
 import routerCats from './routes/carts.routes.js'
 import routerPages from './views/routes/pages.routes.js'
+import ProductManager from "./models/productManager.js";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+
+const productManager = new ProductManager();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -42,17 +45,18 @@ app.engine('handlebars', handlebars.engine())
 app.set('view engine', 'handlebars')
 app.set('views', __dirname+'/views')
 
-let products = []
+let products = await productManager.getProducts()
 
 //Inicializar el Socket en el servido
 io.on('connection', (socket)=>{
   console.log('User conectado')
-  //socket.emit('mesagge', 'Hola Cliente, soy el back')
   socket.emit('products', products)
-  socket.on('new-product', (data)=>{    
-    products.push(data)
-    io.sockets.emit('products', products)
-  })
+
+  socket.on('new-product', (data)=>{
+    console.log('on websocket data', data )
+    products = data;
+    io.sockets.emit('products', products);
+});
 })
 
 
