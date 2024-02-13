@@ -1,4 +1,5 @@
 import fs from "fs";
+import path from 'path';
 
 const generateRandomId = (length) => {
   const characters =
@@ -13,7 +14,8 @@ const generateRandomId = (length) => {
 
 export default class CartsManager {
   constructor() {
-    this.path = "./carts.json";
+    const currentFileUrl = import.meta.url;
+    this.path = new URL('../data/carts.json', currentFileUrl).pathname;
   }
 
   createCart = async () => {
