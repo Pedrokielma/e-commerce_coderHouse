@@ -1,7 +1,12 @@
 <div class="container">
   <div class="show-products">
     <h1 class="title">Chat</h1>
-   <div id="all-products" class="all-products"></div>
+    <div id="messages" class="chat-content"></div>
+   <form onsubmit="return addMessage()" >
+    <input type="text" id="username" placeholder="Tu Nombre" >
+    <input type="text" id="text" placeholder="Cuentanos algo..." >
+    <input type="submit" value="Enviar">
+  </form>
   </div>
 </div>
 

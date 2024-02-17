@@ -87,6 +87,9 @@ body {
 .show-products{
     padding: 50px 30px 30px 30px;
 }
-.title {
-}
 
+
+/* Chat */
+.chat-content{
+height: 60vh;
+}

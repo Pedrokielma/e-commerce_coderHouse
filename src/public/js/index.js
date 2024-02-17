@@ -75,18 +75,13 @@ const addProduct = async (e) => {
    if(response.ok){
      socket.emit("new-product", productData);
    }
-      // socket.emit("products");
-    
-
-      console.log('update websocket on adding product')
-    
+  
   } catch (error) {
     console.error("Error adding product:", error);
   }
 
   return false;
 };
-
 
 const deleteProduct = async (element) => {
     const id = element.dataset.productId;
@@ -101,3 +96,50 @@ const deleteProduct = async (element) => {
       console.error("Error deleting product:", error);
     }
   };
+
+
+
+  // Chat
+
+
+socket.on('messages', (data)=>{
+  renderChat(data)
+})
+
+function renderChat(data){
+  const html = data.map(elem => {
+        return (`
+          <div>
+            <strong> ${elem.user} </strong>
+            <em> ${elem.content} </em>
+          </div>
+        `)
+  }).join(' ')
+
+  document.getElementById('messages').innerHTML = html
+}
+
+const addMessage = async (e) => {
+  const message = {
+    user: document.getElementById('username').value, 
+    content: document.getElementById('text').value
+  }
+ console.log(message)
+  try {
+    const response = await fetch(`http://localhost:8080/api/chat/addMessage`, {
+      
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(message),
+      
+    });
+    if(response.ok){
+      socket.emit('new-message', message)
+    }
+  } catch (error) {
+    console.error("Error deleting product:", error);
+  }
+  return false
+}
