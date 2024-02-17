@@ -5,11 +5,10 @@ import { Router } from 'express';
 const routerPages = Router();
 
 routerPages.get('/', (req, res)=>{
-    res.render('home', {})
-  })
-
-  routerPages.get('/realTimeProducts', (req, res)=>{
     res.render('realTimeProducts', {})
+  })
+  routerPages.get('/chat', (req, res)=>{
+    res.render('chat', {})
   })
 
 export default routerPages

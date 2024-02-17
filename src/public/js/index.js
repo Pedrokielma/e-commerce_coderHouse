@@ -62,7 +62,7 @@ const addProduct = async (e) => {
   };
   try {
     // Make a POST request to the server endpoint
-    await fetch(
+   const response = await fetch(
       "http://localhost:8080/api/products/addProduct",
       {
         method: "POST",
@@ -72,6 +72,14 @@ const addProduct = async (e) => {
         body: JSON.stringify(productData),
       }
     );
+   if(response.ok){
+     socket.emit("new-product", productData);
+   }
+      // socket.emit("products");
+    
+
+      console.log('update websocket on adding product')
+    
   } catch (error) {
     console.error("Error adding product:", error);
   }
@@ -86,6 +94,9 @@ const deleteProduct = async (element) => {
       const response = await fetch(`http://localhost:8080/api/products/deleteProduct/${id}`, {
         method: "DELETE",
       });
+      if(response.ok){
+        socket.emit("delete-product", id);
+      }
     } catch (error) {
       console.error("Error deleting product:", error);
     }

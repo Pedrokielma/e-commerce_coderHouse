@@ -3,12 +3,9 @@ import Database from "./dao/db/index.js";
 import routerProd from "./routes/products.routes.js";
 import routerCats from "./routes/carts.routes.js";
 import routerPages from "./views/routes/pages.routes.js";
-import ProductManager from "./dao/fileSystem/managers/productManager.js";
+import ProductManager from "./dao/db/managers/productManager.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-
-
-
 
 
 const productManager = new ProductManager();
@@ -49,22 +46,33 @@ app.engine("handlebars", handlebars.engine());
 app.set("view engine", "handlebars");
 app.set("views", __dirname + "/views");
 
-let products = await productManager.getProducts();
 
-//Inicializar el Socket en el servido
-io.on("connection", (socket) => {
-  console.log("User conectado");
-  socket.emit("products", products);
 
-  socket.on("new-product", (data) => {
-    console.log("on websocket data", data);
-    products = data;
-    io.sockets.emit("products", products);
+
+  
+
+ 
+  
+  //Inicializar el Socket en el servido
+  io.on("connection", async (socket) => {
+    console.log("User conectado");
+    let products = await productManager.getProducts();
+    socket.emit("products", products);
+  
+    socket.on("new-product", (data) => {
+      products.push(data);
+      io.sockets.emit("products", products);
+    });
+    socket.on("delete-product", (data) => {
+      products = products.filter(obj => obj.id !== data);
+      io.sockets.emit("products", products);
+    })
   });
-});
+
+
 
 server.listen(PORT, () => {
   console.log("Server running on port 8080");
-  //Database
-  Database.connect();
+   //Database
+Database.connect()
 });

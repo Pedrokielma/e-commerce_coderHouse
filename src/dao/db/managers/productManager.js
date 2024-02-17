@@ -18,8 +18,8 @@ export default class ProductManager {
       if (limit) {
         productsQuery = productsQuery.limit(limit);
       }
-      const products = await productsQuery.exec();
-      return products;
+      // const products = await productsQuery.exec();
+      return productsQuery;
     } catch (err) {
       throw new Error(err.message || 'Failed to get products');
     }
@@ -94,13 +94,13 @@ export default class ProductManager {
   async deleteProduct(id) {
     try {
       // Check if product exists
-      const existingProduct = await ProductModel.findById(id);
+      const existingProduct = await ProductModel.findOne({ id: id })
       if (!existingProduct) {
         return `Product with id '${id}' not found`;
       }
 
       // Delete product
-      await ProductModel.findByIdAndDelete(id);
+      await ProductModel.findOneAndDelete({ id: id });
 
       return `Product with id '${id}' deleted`;
     } catch (err) {

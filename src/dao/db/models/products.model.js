@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
   id: {
     type: String,
     required: true,
@@ -32,7 +31,7 @@ const productSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['eletronic', 'kitchen', 'eletrodomestic'],
+    enum: ['electronic', 'kitchen', 'electrodomestic'],
   },
   status: {
     type: Boolean,
