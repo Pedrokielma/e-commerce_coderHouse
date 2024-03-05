@@ -15,18 +15,15 @@ routerProd.get("/getProducts", async (req, res) => {
 });
 
 routerProd.get("/getProductById/:id", async (req, res) => {
-  let products = await productManager.getProducts();
-  let foundProduct = products.find((item) => {
-    return item.id == req.params.id;
-  });
-  if (!foundProduct) {
+  let product = await productManager.getProductById(req.params.id);
+  if (!product) {
     return res.status(400).send({
       message: `Product not found`
     });
   } else {
     return res.status(200).send({
-      message: `the product You are looking for is ${foundProduct.title}`,
-      data: foundProduct,
+      message: `the product You are looking for is ${product.title}`,
+      data: product,
     });
   }
 });

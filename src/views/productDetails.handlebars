@@ -1,0 +1,60 @@
+ <div class="container">
+        <div class="product-details">
+            <h1>{{product.title}}</h1>
+            <div class="product-info">
+                <div class="product-image">
+                    <img src="{{product.thumbnail}}" alt="{{product.title}}">
+                </div>
+                <div class="product-description">
+                    <p><strong>Description:</strong> {{product.description}}</p>
+                    <p><strong>Price:</strong> ${{product.price}}</p>
+                    <p><strong>Category:</strong> {{product.category}}</p>
+                    <p><strong>Code:</strong> {{product.code}}</p>
+                    <p><strong>Stock:</strong> {{product.stock}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Fetch product data from the server using the product ID from the URL
+        const productId = window.location.pathname.split('/')[1];
+        fetch(`http://localhost:8080/api/products/${productId}`)
+            .then(response => response.json())
+            .then(product => {
+                renderProductDetail(product);
+            })
+            .catch(error => {
+                console.error('Error fetching product:', error);
+            });
+
+        // Function to render product detail on the page
+        function renderProductDetail(product) {
+            const productInfo = {
+                product: product
+            };
+            const template = Handlebars.compile(document.querySelector('#product-detail-template').innerHTML);
+            const html = template(productInfo);
+            document.querySelector('.container').innerHTML = html;
+        }
+    </script>
+
+    <!-- Your Handlebars template -->
+    <script id="product-detail-template" type="text/x-handlebars-template">
+        <div class="product-details">
+            <h1>{{product.title}}</h1>
+            <div class="product-info">
+                <div class="product-image">
+                    <img src="{{product.thumbnail}}" alt="{{product.title}}">
+                </div>
+                <div class="product-description">
+                    <p><strong>Description:</strong> {{product.description}}</p>
+                    <p><strong>Price:</strong> ${{product.price}}</p>
+                    <p><strong>Category:</strong> {{product.category}}</p>
+                    <p><strong>Code:</strong> {{product.code}}</p>
+                    <p><strong>Stock:</strong> {{product.stock}}</p>
+                </div>
+            </div>
+        </div>
+    </script>

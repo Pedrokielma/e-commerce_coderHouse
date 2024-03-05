@@ -72,6 +72,7 @@ io.on("connection", async (socket) => {
     messages.push(data);
     io.sockets.emit("messages", messages);
   });
+
 });
 
 server.listen(PORT, () => {

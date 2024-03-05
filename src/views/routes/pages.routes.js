@@ -10,5 +10,9 @@ routerPages.get('/', (req, res)=>{
   routerPages.get('/chat', (req, res)=>{
     res.render('chat', {})
   })
+  routerPages.get('/:id', (req, res)=>{
+    res.render('chat', {})
+  })
+
 
 export default routerPages

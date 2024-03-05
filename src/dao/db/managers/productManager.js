@@ -1,15 +1,6 @@
 import ProductModel from '../models/products.model.js';
 
-const generateRandomId = (length) => {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let randomId = "";
-  Array.from({ length }).forEach(() => {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    randomId += characters.charAt(randomIndex);
-  });
-  return randomId;
-};
+
 
 export default class ProductManager {
   async getProducts(limit) {
@@ -42,7 +33,6 @@ export default class ProductManager {
       // Create new product instance
       const product = new ProductModel({
         ...newProduct,
-        id: generateRandomId(16),
         status: true // Set default status
       });
 
@@ -94,13 +84,13 @@ export default class ProductManager {
   async deleteProduct(id) {
     try {
       // Check if product exists
-      const existingProduct = await ProductModel.findOne({ id: id })
+      const existingProduct = await ProductModel.findOne({ _id: id })
       if (!existingProduct) {
         return `Product with id '${id}' not found`;
       }
 
       // Delete product
-      await ProductModel.findOneAndDelete({ id: id });
+      await ProductModel.findOneAndDelete({ _id: id });
 
       return `Product with id '${id}' deleted`;
     } catch (err) {
