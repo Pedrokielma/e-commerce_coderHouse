@@ -65,6 +65,8 @@ io.on("connection", async (socket) => {
     io.sockets.emit("products", products);
   });
 
+  // let cartProducts = cartManager.getProducts();
+
   // Chat
   let messages = await chatManager.getMessages();
   socket.emit("messages", messages);

@@ -1,24 +1,7 @@
 <div class="container">
-  <div class="add-products-form">
-    <h2 class="title"> Add new products</h2>
-     <form onsubmit="return addProduct(event)">
-      <input type="text" id="title" placeholder="Title" />
-      <input type="text" id="description" placeholder="Description" />
-      <input type="number" id="price" placeholder="Price" />
-      <input type="text" id="thumbnail" placeholder="Thumbnail" />
-      <input type="text" id="code" placeholder="Code" />
-      <input type="number" id="stock" placeholder="Stock" />
-       <select id="category">
-        <option value="electronic">Electronic</option>
-        <option value="kitchen">Kitchen</option>
-        <option value="electrodomestic">Electrodomestic</option>
-      </select>
-      <input type="submit" value="Add Product" />
-    </form>
-  </div>
 
   <div  class="real-time-products">
-    <h1 class="title">Products</h1>
+    <h1 class="title">Products in my cart</h1>
     <div id="all-products" class="all-products"></div>
      <div id="real-time-products" class="all-products"></div>
   </div>
@@ -121,7 +104,6 @@ const addProduct = async (e) => {
 
 const deleteProduct = async (element) => {
     const id = element.dataset.productId;
-  console.log('id', id)
     try {
       const response = await fetch(`http://localhost:8080/api/products/deleteProduct/${id}`, {
         method: "DELETE",
@@ -133,5 +115,7 @@ const deleteProduct = async (element) => {
       console.error("Error deleting product:", error);
     }
   };
+  
+  
 
 </script>

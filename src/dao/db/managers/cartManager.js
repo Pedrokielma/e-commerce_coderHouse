@@ -4,8 +4,9 @@ export default class CartsManager {
 
 
   async createCart() {
+    const currentDate = new Date();
     try {
-      const newCart = await CartModel.create({ products: [] });
+      const newCart = await CartModel.create({ date: currentDate });
       return newCart;
     } catch (err) {
       throw new Error(err.message || 'Failed to create cart');

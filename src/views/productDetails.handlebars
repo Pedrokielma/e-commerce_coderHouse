@@ -1,16 +1,56 @@
- <div class="container">
+ <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .product-details {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .product-details h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .product-image img {
+            max-width: 100%;
+            height: auto;
+        }
+        .product-description {
+            margin-top: 20px;
+        }
+        .product-description p {
+            margin-bottom: 10px;
+        }
+        .product-description strong {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
         <div class="product-details">
-            <h1>{{product.title}}</h1>
+            <h1 id="product-title">Loading...</h1>
             <div class="product-info">
                 <div class="product-image">
-                    <img src="{{product.thumbnail}}" alt="{{product.title}}">
+                    <img id="product-thumbnail" src="" alt="">
                 </div>
                 <div class="product-description">
-                    <p><strong>Description:</strong> {{product.description}}</p>
-                    <p><strong>Price:</strong> ${{product.price}}</p>
-                    <p><strong>Category:</strong> {{product.category}}</p>
-                    <p><strong>Code:</strong> {{product.code}}</p>
-                    <p><strong>Stock:</strong> {{product.stock}}</p>
+                    <p><strong>Description:</strong> <span id="product-description">Loading...</span></p>
+                    <p><strong>Price:</strong> $<span id="product-price">Loading...</span></p>
+                    <p><strong>Category:</strong> <span id="product-category">Loading...</span></p>
+                    <p><strong>Code:</strong> <span id="product-code">Loading...</span></p>
+                    <p><strong>Stock:</strong> <span id="product-stock">Loading...</span></p>
                 </div>
             </div>
         </div>
@@ -19,42 +59,38 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         // Fetch product data from the server using the product ID from the URL
-        const productId = window.location.pathname.split('/')[1];
-        fetch(`http://localhost:8080/api/products/${productId}`)
-            .then(response => response.json())
-            .then(product => {
-                renderProductDetail(product);
-            })
-            .catch(error => {
-                console.error('Error fetching product:', error);
-            });
+        const pathSegments = window.location.pathname.split('/');
+        const id = pathSegments[1];
+
+        const fetchProduct = async () => {
+            try {
+                const response = await fetch(
+                    `http://localhost:8080/api/products/getProductById/${id}`
+                );
+                const result = await response.json();
+                if (result.data) {
+                    // If the data is available, render it
+                    renderProductDetail(result.data);
+                } else {
+                    console.error("No data received from the server");
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        // Call fetchProduct to initiate fetching product data
+        fetchProduct();
 
         // Function to render product detail on the page
         function renderProductDetail(product) {
-            const productInfo = {
-                product: product
-            };
-            const template = Handlebars.compile(document.querySelector('#product-detail-template').innerHTML);
-            const html = template(productInfo);
-            document.querySelector('.container').innerHTML = html;
+            document.getElementById('product-title').textContent = product.title;
+            document.getElementById('product-thumbnail').src = product.thumbnail;
+            document.getElementById('product-thumbnail').alt = product.title;
+            document.getElementById('product-description').textContent = product.description;
+            document.getElementById('product-price').textContent = product.price;
+            document.getElementById('product-category').textContent = product.category;
+            document.getElementById('product-code').textContent = product.code;
+            document.getElementById('product-stock').textContent = product.stock;
         }
-    </script>
-
-    <!-- Your Handlebars template -->
-    <script id="product-detail-template" type="text/x-handlebars-template">
-        <div class="product-details">
-            <h1>{{product.title}}</h1>
-            <div class="product-info">
-                <div class="product-image">
-                    <img src="{{product.thumbnail}}" alt="{{product.title}}">
-                </div>
-                <div class="product-description">
-                    <p><strong>Description:</strong> {{product.description}}</p>
-                    <p><strong>Price:</strong> ${{product.price}}</p>
-                    <p><strong>Category:</strong> {{product.category}}</p>
-                    <p><strong>Code:</strong> {{product.code}}</p>
-                    <p><strong>Stock:</strong> {{product.stock}}</p>
-                </div>
-            </div>
-        </div>
     </script>

@@ -11,7 +11,9 @@ routerPages.get('/', (req, res)=>{
     res.render('chat', {})
   })
   routerPages.get('/:id', (req, res)=>{
-    res.render('chat', {})
+    const id = req.params.id
+    console.log('id', id)
+    res.render('productDetails', {id})
   })
 
 
