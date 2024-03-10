@@ -35,7 +35,6 @@ const addMessage = async (e) => {
     user: document.getElementById('username').value, 
     content: document.getElementById('text').value
   }
- console.log(message)
   try {
     const response = await fetch(`http://localhost:8080/api/chat/addMessage`, {
       

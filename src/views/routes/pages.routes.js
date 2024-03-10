@@ -12,7 +12,6 @@ routerPages.get('/', (req, res)=>{
   })
   routerPages.get('/:id', (req, res)=>{
     const id = req.params.id
-    console.log('id', id)
     res.render('productDetails', {id})
   })
 

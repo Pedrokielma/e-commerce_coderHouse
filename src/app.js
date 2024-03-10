@@ -6,11 +6,13 @@ import routerChat from "./routes/chat.routes.js"
 import routerPages from "./views/routes/pages.routes.js";
 import ProductManager from "./dao/db/managers/productManager.js";
 import ChatManager from "./dao/db/managers/chatManager.js";
+import CartManager from "./dao/db/managers/cartManager.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
 const productManager = new ProductManager();
 const chatManager = new ChatManager();
+const cartManager = new CartManager()
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -65,7 +67,7 @@ io.on("connection", async (socket) => {
     io.sockets.emit("products", products);
   });
 
-  // let cartProducts = cartManager.getProducts();
+  let cartProducts = await cartManager.getProducts();
 
   // Chat
   let messages = await chatManager.getMessages();
