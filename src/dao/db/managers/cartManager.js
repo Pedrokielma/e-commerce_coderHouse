@@ -89,10 +89,11 @@ export default class CartsManager {
 
   async getCartById(cartId) {
     try {
-      const cart = await CartModel.findOne({ cartId });
+      const cart = await CartModel.findById( cartId );
       if (!cart) {
         throw new Error(`Cart with id '${cartId}' not found`);
       }
+      await cart.populate('products.product')
       return cart;
     } catch (err) {
       throw new Error(err.message || 'Failed to get cart by id');

@@ -1,121 +1,133 @@
-<div class="container">
+<style>
+.container {
+  margin: 0 auto;
+  max-width: 800px;
+}
 
-  <div  class="real-time-products">
-    <h1 class="title">Products in my cart</h1>
-    <div id="all-products" class="all-products"></div>
-     <div id="real-time-products" class="all-products"></div>
+.product-card {
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.delete-icon {
+  cursor: pointer;
+  color: red;
+  float: right;
+}
+</style>
+
+<div class="container">
+  <div class="cart-products">
+    <h1 class="title">Products in My Cart</h1>
+    <div id="cart-template" class="all-products">
+        {{#each cart.products}}
+    <div class="product-card">
+      <div class="header-card">
+        <h2>{{this.product.title}}</h2>
+        <span class="delete-icon" onclick="deleteProduct('{{../cart._id}}', '{{this.product._id}}')">
+          <i class="trash fas fa-trash-alt"></i>
+        </span>
+      </div>
+      <p>{{this.product.description}}</p>
+      <p><strong>Price:</strong> ${{this.product.price}}</p>
+      <p><strong>Quantity:</strong> {{this.quantity}}</p>
+    </div>
+  {{/each}}
+    </div>
   </div>
 </div>
 
-<script src="/socket.io/socket.io.js"></script>
+
+
 <script>
-
-const fetchProducts = async () => {
-  try {
-    const response = await fetch(
-      "http://localhost:8080/api/products/getProducts"
-    );
-    const result = await response.json();
-    if (result.data) {
-      // If the data is available, render it
-      renderAllProducts(result.data);
-    } else {
-      console.error("No data received from the server");
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
-
-// Call the fetchProducts function to initiate the data fetching and rendering
-// fetchProducts();
-
-let socket = io();
-
-socket.on("products", (data) => {
-  renderRealTimeProducts(data);
-});
- 
-
-const renderRealTimeProducts = (data) => {
-  const html = data
+const renderCart = (cartData) => {
+ const html = cartData
     .map((elem) => {
       return `
-      <div class="product-card">
+          <div class="product-card">
       <div class="header-card">
-      <h2 data-product-id="${elem._id}" onclick="redirectToProduct(this)" >${elem.title}</h2>
-      <span 
-      data-product-id="${elem._id}" onclick="deleteProduct(this)" class="delete-icon"><i class="trash fas fa-trash-alt"></i></span>
+        <h2>${elem.product.title}</h2>
+        <span class="quantity-control" data-product-id="${elem.product._id}" data-quantity="${elem.quantity}">
+          <button class="decrease-quantity" onclick="updateQuantity('${elem._id}', '${elem.product._id}', 'decrease')">-</button>
+          <span>${elem.quantity}</span>
+          <button class="increase-quantity" onclick="updateQuantity('${elem._id}', '${elem.product._id}', 'increase')">+</button>
+        </span>
+        <span class="delete-icon" onclick="deleteProduct('${elem._id}', '${elem.product._id}')">
+          <i class="trash fas fa-trash-alt"></i>
+        </span>
       </div>
-        <p>${elem.description}</p>
-        <p><strong>Price:</strong> $${elem.price}</p>
-        <p><strong>Category:</strong> ${elem.category}</p>
-      </div>
+      <p>${elem.product.description}</p>
+      <p><strong>Price:</strong> $${elem.product.price}</p>
+    </div>
         `;
     })
     .join(" ");
 
-  document.getElementById("real-time-products").innerHTML = html;
+  document.getElementById('cart-template').innerHTML = html;
+  console.log('epa', cartData)
 };
 
-const addProduct = async (e) => {
-  // Prevent the form from submitting and page reloading
-  e.preventDefault();
-  // Get product data from the form
-  const productData = {
-    title: document.getElementById("title").value,
-    description: document.getElementById("description").value,
-    price: parseFloat(document.getElementById("price").value),
-    thumbnail: document.getElementById("thumbnail").value,
-    code: document.getElementById("code").value,
-    stock: parseInt(document.getElementById("stock").value),
-    category: document.getElementById("category").value,
-  };
+const fetchCart = async () => {
   try {
-    // Make a POST request to the server endpoint
-   const response = await fetch(
-      "http://localhost:8080/api/products/addProduct",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(productData),
-      }
-    );
-   if(response.ok){
-     socket.emit("new-product", productData);
-   }
-  
+    const response = await fetch("http://localhost:8080/api/carts/getCartById/65e9c0f82e9686f84c07ec36");
+    const cartData = await response.json();
+    console.log('acrtData', cartData.message.products)
+    if (cartData.message) {
+      renderCart(cartData.message.products);
+    } else {
+      console.error("No cart data received from the server");
+    }
   } catch (error) {
-    console.error("Error adding product:", error);
+    console.error("Error fetching cart data:", error);
   }
-
-  return false;
 };
 
 
-// Function to redirect to product detail page
-    const  redirectToProduct = (element) => {
-      const id = element.dataset.productId;
-        window.location.href = `/${id}`;
+const deleteProduct = async (productId) => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/carts/deleteProduct/65e9c0f82e9686f84c07ec36/${productId}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      fetchCart(); // Fetch and render updated cart after deletion
     }
+  } catch (error) {
+    console.error("Error deleting product:", error);
+  }
+};
 
-
-const deleteProduct = async (element) => {
-    const id = element.dataset.productId;
-    try {
-      const response = await fetch(`http://localhost:8080/api/products/deleteProduct/${id}`, {
-        method: "DELETE",
-      });
-      if(response.ok){
-        socket.emit("delete-product", id);
-      }
-    } catch (error) {
-      console.error("Error deleting product:", error);
+const deleteAllProducts = async () => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/carts/deleteAllProducts/65e9c0f82e9686f84c07ec36`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      fetchCart(); // Fetch and render updated cart after deletion
     }
-  };
-  
-  
+  } catch (error) {
+    console.error("Error deleting all products:", error);
+  }
+};
+
+const updateProductQuantity = async (productId, quantity) => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/carts/updateProductQuantity/65e9c0f82e9686f84c07ec36/${productId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ quantity })
+    });
+    if (response.ok) {
+      fetchCart(); // Fetch and render updated cart after quantity update
+    }
+  } catch (error) {
+    console.error("Error updating product quantity:", error);
+  }
+};
+
+// Call fetchCart function to fetch and render cart data
+fetchCart();
 
 </script>
