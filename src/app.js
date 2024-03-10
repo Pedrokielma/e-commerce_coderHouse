@@ -56,7 +56,8 @@ io.on("connection", async (socket) => {
   console.log("User conectado");
 
   // Products
-  let products = await productManager.getProducts();
+  let { payload: products } = await productManager.getProducts(10, 1, 'asc', null);
+
   socket.emit("products", products);
   socket.on("new-product", (data) => {
     products.push(data);

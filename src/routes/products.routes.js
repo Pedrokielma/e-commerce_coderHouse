@@ -5,14 +5,20 @@ const productManager = new ProductManager();
 const routerProd = Router();
 
 routerProd.get("/getProducts", async (req, res) => {
-    const limit = parseInt(req.query.limit) || undefined;
-    // Retrieve products with the specified limit
-    let products = await productManager.getProducts(limit);
-    res.status(200).send({
-      message: limit ? `Product list limited to ${limit} items` : `All products are in the list`,
-      data: products,
-    });
+  try {
+      const limit = parseInt(req.query.limit) || 10;
+      const page = parseInt(req.query.page) || 1;
+      const sort = req.query.sort || undefined;
+      const query = req.query.query ? JSON.parse(req.query.query) : {};
+
+      const products = await productManager.getProducts(limit, page, sort, query);
+
+      res.status(200).send(products);
+  } catch (error) {
+      res.status(500).send({ status: 'error', message: error.message });
+  }
 });
+
 
 routerProd.get("/getProductById/:id", async (req, res) => {
   let product = await productManager.getProductById(req.params.id);

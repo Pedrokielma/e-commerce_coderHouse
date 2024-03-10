@@ -3,18 +3,55 @@ import ProductModel from '../models/products.model.js';
 
 
 export default class ProductManager {
-  async getProducts(limit) {
+  async getProducts(limit, page, sort, query) {
     try {
-      const productsQuery = await ProductModel.find();
-      if (limit) {
-        productsQuery = productsQuery.limit(limit);
+      let pipeline = [];
+
+      // Filtro según la consulta
+      if (query) {
+        pipeline.push({ $match: { category: query } });
       }
-      // const products = await productsQuery.exec();
-      return productsQuery;
+  
+      // Ordenamiento según el parámetro 'sort'
+      if (sort === 'asc' || sort === 'desc') {
+        pipeline.push({ $sort: { price: sort === 'asc' ? 1 : -1 } });
+      }
+  
+      // Paginación
+      const skip = (page - 1) * limit;
+      pipeline.push({ $skip: skip });
+      pipeline.push({ $limit: limit });
+
+        const products = await ProductModel.aggregate(pipeline);
+        console.log('products', products)
+        let totalPages = 1;
+        let totalProducts = 0;
+        if (products.length > 0) {
+            totalProducts = products[0].totalProducts;
+            totalPages = Math.ceil(totalProducts / limit);
+        }
+
+        const hasPrevPage = page > 1;
+        const hasNextPage = page < totalPages;
+
+        const prevLink = hasPrevPage ? `/api/products/getProducts?page=${page - 1}&limit=${limit}&sort=${sort}&query=${JSON.stringify(query)}` : null;
+        const nextLink = hasNextPage ? `/api/products/getProducts?page=${page + 1}&limit=${limit}&sort=${sort}&query=${JSON.stringify(query)}` : null;
+
+        return {
+            status: 'success',
+            payload: products,
+            prevPage: page - 1,
+            nextPage: page + 1,
+            page,
+            hasPrevPage,
+            hasNextPage,
+            prevLink,
+            nextLink
+        };
     } catch (err) {
-      throw new Error(err.message || 'Failed to get products');
+        throw new Error(err.message || 'Failed to get products');
     }
-  }
+}
 
   async addProduct(newProduct) {
     try {
