@@ -23,7 +23,6 @@ export default class ProductManager {
       pipeline.push({ $limit: limit });
 
         const products = await ProductModel.aggregate(pipeline);
-        console.log('products', products)
         let totalPages = 1;
         let totalProducts = 0;
         if (products.length > 0) {

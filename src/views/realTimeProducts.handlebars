@@ -121,7 +121,6 @@ const addProduct = async (e) => {
 
 const deleteProduct = async (element) => {
     const id = element.dataset.productId;
-  console.log('id', id)
     try {
       const response = await fetch(`http://localhost:8080/api/products/deleteProduct/${id}`, {
         method: "DELETE",

@@ -12,7 +12,7 @@ import { dirname } from "path";
 
 const productManager = new ProductManager();
 const chatManager = new ChatManager();
-const cartManager = new CartManager()
+// const cartManager = new CartManager()
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

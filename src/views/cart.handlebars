@@ -65,14 +65,12 @@ const renderCart = (cartData) => {
     .join(" ");
 
   document.getElementById('cart-template').innerHTML = html;
-  console.log('epa', cartData)
 };
 
 const fetchCart = async () => {
   try {
     const response = await fetch("http://localhost:8080/api/carts/getCartById/65e9c0f82e9686f84c07ec36");
     const cartData = await response.json();
-    console.log('acrtData', cartData.message.products)
     if (cartData.message) {
       renderCart(cartData.message.products);
     } else {
